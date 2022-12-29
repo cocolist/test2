@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>世界孔子学院开设数量变化</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
+	<style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 80%;
+            height: 90px;
+            padding: 10px;
+            background: rgba(100, 100, 100, 0.3);
+        }
+
+        .amap-logo{
+            display: none;
+            opacity:0;
+        }
+        .amap-copyright {
+            opacity:0;
+        }
+
+        .count {
+            position: absolute;
+            bottom: 40px;
+            left: 50px;
+            z-index: 1;
+        }
+
+        .num {
+            font-size: 26px;
+            color: #B44322;
+        }
+
+        .txt {
+            font-size: 16px;
+            color: #775032;
+        }
+
+        .demo-title {
+            position: absolute;
+            top: 25px;
+            left: 40%;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 18px;
+            margin: 0;
+            color: midnightblue;
+        }
+
+        h3 {
+            font-size: 12px;
+            font-weight: normal;
+            margin-top: 5px;
+            color: midnightblue;
+        }
+    </style>
+		
+		
+</head>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="file:///C:/Users/co'co/Desktop/GIS3/exp.html?#">首页 <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a  class="nav-link" href="https://baike.baidu.com/item/%E5%AD%94%E5%AD%90%E5%AD%A6%E9%99%A2/812632">孔子学院</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+          学院官网
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="http://www.oci.shisu.edu.cn/">上海外国语大学</a>
+          <a class="dropdown-item" href="http://ci.ruc.edu.cn/kzxy/index.htm">中国人民大学</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="https://www.cief.org.cn/zjkzxy">走近孔子学院</a>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled">Disabled</a>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+<div class="demo-title">
+    <h1>孔子学院：文化资产的分布及影响</h1>
+</div>
+<div id="map"></div>
+<canvas id="player"></canvas>
+<div class="count">
+    <div class="num"> 1000</div>
+    <div class="txt">locations</div>
+</div>
+
+<script src="https://webapi.amap.com/maps?v=2.0&key=00f5546a339d1dd0b10ddcb951496ac8&plugin=AMap.Scale,AMap.ToolBar"></script>
+<script src="https://webapi.amap.com/loca?v=2.0.0&key=00f5546a339d1dd0b10ddcb951496ac8"></script>
+<script src="https://a.amap.com/Loca/static/loca-v2/demos/mock_data/confucius_data.js"></script>
+<script src="https://a.amap.com/Loca/static/loca-v2/demos/libs/index.aio.min.js"></script>
+		
+<script>
+  var map = new AMap.Map('map', {
+    zoom: 2.4,
+    showLabel: false,
+    viewMode: '3D',
+    center: [-7.3828125, 8.059229627200192],
+    mapStyle: 'amap://styles/45311ae996a8bea0da10ad5151f72979',
+  });
+
+  var loca = new Loca.Container({
+    map,
+  });
+
+  var pl = new Loca.PointLayer({
+    zIndex: 10,
+    opacity: 1,
+  });
+
+
+  var yearRange = [05, 17];
+  function updateSource(curYear) {
+    let features = universities.features.filter(f => {
+      let yy = f.properties.date.split('-').pop();
+      return yy <= curYear;
+    })
+    let n = features.length;
+    let dom = document.getElementsByClassName('num')[0];
+
+    dom.innerText = n;
+    var geo = new Loca.GeoJSONSource({
+      data: {
+        "type": "FeatureCollection",
+        "features": features,
+      },
+    });
+    pl.setSource(geo);
+  }
+
+  updateSource(yearRange[0])
+
+  var colors = [
+    'rgba(255, 195, 136,0.8)',
+    'rgba(255, 195, 136,0.8)',
+    'rgba(255, 178, 105,0.8)',
+    'rgba(255, 161, 94,0.8)',
+    'rgba(253, 143, 91,0.8)',
+    'rgba(249, 125, 90,0.8)',
+    'rgba(242, 108, 88,0.8)',
+    'rgba(233, 91, 86,0.8)',
+    'rgba(224, 75, 81,0.8)',
+    'rgba(213, 58, 75,0.8)',
+    'rgba(201, 44, 66,0.8)',
+    'rgba(187, 29, 54,0.8)',
+    'rgba(172, 15, 41,0.8)',
+    'rgba(156, 4, 24,0.8)',
+  ];
+  var style = {
+    radius: 7,
+    unit: 'px',
+    color: (index, feature) => {
+      let dateStr = feature.properties.date;
+      let yy = dateStr.split('-').pop();
+      let i = yy - 05;
+      let ind = i < 0 ? 0 : i >= colors.length ? colors.length - 1 : i;
+      color = colors[ind];
+      return color;
+    },
+    borderWidth: 0,
+  }
+  pl.setStyle(style);
+  loca.add(pl);
+
+  // 图例
+  var lengend = new Loca.Legend({
+    loca: loca,
+    title: {
+      label: '年份',
+      fontColor: 'rgba(255,255,255,0.4)',
+      fontWeight: 'normal',
+      fontSize: '16px'
+    },
+    style: {
+      backgroundColor: 'rgba(255,255,255,0.1)',
+      left: '20px',
+      bottom: '180px',
+      fontSize: '12px'
+    },
+    dataMap: [
+      { label: '2021年', color: colors[12] },
+      // { label: '2020年', color: colors[11] },
+      { label: '2019年', color: colors[10] },
+      // { label: '2018年', color: colors[9] },
+      { label: '2017年', color: colors[8] },
+      // { label: '2016年', color: colors[7] },
+      { label: '2015年', color: colors[6] },
+      // { label: '2014年', color: colors[5] },
+      { label: '2013年', color: colors[4] },
+      // { label: '2012年', color: colors[3] },
+      { label: '2011年', color: colors[2] },
+      // { label: '2010年', color: colors[1] },
+      { label: '2009年', color: colors[0] },
+    ],
+  });
+
+  addPlayBar();
+
+  function addPlayBar() {
+    var canvasDom = document.getElementById('player');
+
+    var _style = getComputedStyle(canvasDom);
+    let height = _style.getPropertyValue('height');
+    let width = _style.getPropertyValue('width');
+    canvasDom.height = parseInt(height.slice(0, -2));
+    canvasDom.width = parseInt(width.slice(0, -2));
+
+    var dots = new Array(13).fill(1).map((n, i) => {
+      return {
+        progress: i * (1 / 12),
+        text: `${2009 + i}年`,
+      }
+    });
+
+    this.player = new PlayBar({
+      canvas: canvasDom,
+      option: {
+        progressTextCallback: (progress) => {
+          for (let i = 1; i < dots.length; i++) {
+            let cur = dots[i];
+            let pre = dots[i - 1]
+            if (cur.progress >= progress && pre.progress < progress) {
+              return cur && cur.text
+            }
+          }
+          return ''
+        },
+        background: "rgba(0,0,0,0)",
+        dot: {
+          color: "#444D64",
+          radius: 10,
+          borderWidth: 4,
+          hoverColor: "#CCC",
+        },
+        progressDot: {
+          color: "#C5582D",
+          radius: 10,
+        },
+        progressColor: "#C5582D",
+        button: {
+          radius: 0,
+          color: "#B44322",
+          pause: true,
+        },
+        gap: 30,
+        step: 1 / 12,
+        playTimeLength: 15,
+        padding: 20,
+        lineColor: "#55617F",
+        lineWidth: 3,
+        fontColor: "#727272",
+        fontSize: 12,
+      },
+      data: {
+        dots: dots,
+        progress: 0,
+      }
+    });
+    // player.play();
+    // player.on('play', (e) => {
+    //   player.play();
+    // });
+    // player.on('pause', (e) => {
+    //   this.player.pause();
+    // });
+    player.on('click', (e) => {
+      for (let i = 1; i < dots.length; i++) {
+        let cur = dots[i];
+        let pre = dots[i - 1]
+        if (cur.progress >= e.progress && pre.progress < e.progress) {
+          player.setProgress(cur.progress)
+          updateData(cur.progress)
+          break;
+        }
+      }
+    })
+
+
+    player.on('progress', (e) => {
+      updateData(e.progress);
+      console.log('e.progress', e.progress);
+      if (e.progress >= 1) {
+        setTimeout(() => {
+          player.setProgress(0)
+          player.play();
+        }, 200)
+      }
+    })
+
+    function updateData(progress) {
+      let prog = progress >= 1 ? 1 : progress;
+      let len = yearRange[yearRange.length - 1] - yearRange[0]
+      let ind = len * prog + yearRange[0]
+      updateSource(ind)
+    }
+  }
+</script>
+</body>
+
+</html>
